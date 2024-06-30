@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Movie Recommendation System</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
+                <h1 class="display-4">Movie Recommendation System</h1>
+                <form id="recommendation-form" class="form-inline justify-content-center mt-4">
+                    <input type="text" class="form-control mr-2" id="title" name="title" placeholder="Enter movie title" required>
+                    <button type="submit" class="btn btn-primary">Get Recommendations</button>
+                </form>
+                <div id="recommendations" class="mt-5"></div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#recommendation-form').on('submit', function(event) {
+                event.preventDefault();
+                var title = $('#title').val();
+                $.ajax({
+                    url: '/recommend',
+                    method: 'POST',
+                    data: { title: title },
+                    success: function(response) {
+                        var recommendations = '<h2>Recommendations:</h2><div class="list-group">';
+                        for (var i = 0; i < response.length; i++) {
+                            recommendations += '<a href="#" class="list-group-item list-group-item-action flex-column align-items-start">';
+                            recommendations += '<div class="d-flex w-100 justify-content-between">';
+                            recommendations += '<h5 class="mb-1">' + response[i][0] + '</h5>';
+                            recommendations += '</div>';
+                            recommendations += '<p class="mb-1">' + response[i][1] + '</p>';
+                            recommendations += '</a>';
+                        }
+                        recommendations += '</div>';
+                        $('#recommendations').html(recommendations).hide().fadeIn(1000);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
